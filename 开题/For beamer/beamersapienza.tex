@@ -21,7 +21,7 @@
 
 \newcommand{\hrefcol}[2]{\textcolor{cyan}{\href{#1}{#2}}}
 
-\title{函数漏洞检测智能体工具}
+\title{基于大语言模型的函数级漏洞检测智能体}
 \subtitle{课程项目开题报告}
 \author{组长：李柏谚\quad 组员：杨聃、王义卓、孙伊凡、徐培栋}
 \date{2026 秋季学期 · 高级软件工程}
@@ -29,128 +29,57 @@
 \begin{document}
 \maketitle
 
-% ===================== 1. 项目意义 =====================
+% ===================== 1. 研究背景与问题 =====================
 \footlinecolor{sintefgreen}
-\begin{frame}{一、项目意义：我们为什么要做这件事}
-\framesubtitle{漏洞太多、老工具不好用，而大模型还缺一点「安全常识」}
+\begin{frame}{一、研究背景与问题}
+\framesubtitle{漏洞披露规模扩大，自动化检测需求迫切}
 \small
 \begin{itemize}
-\item \textbf{漏洞多到查不过来}：2026 年前两个季度新增的公开漏洞就超过 \alert{3.5 万个}
-      （每个漏洞有一个 CVE 编号，记录成因、影响和修补办法），人工审计根本跟不上。
-\item \textbf{老工具不太好使}：传统静态分析工具靠写死的规则去匹配，
-      规则没覆盖就\textbf{漏报}、规则太宽就\textbf{误报}，还说不出「为什么觉得有问题」。
-\item \textbf{大模型有机会，但缺两样东西}：它\emph{读得懂代码}，
-      但不知道具体漏洞长什么样（缺「安全常识」），也不知道谁调用了这个函数（缺「上下文」）。
+\item \textbf{漏洞规模持续增长}：2026 年前两个季度新增公开 CVE 漏洞逾 \alert{35{,}000} 项，
+      人工代码审计已难以匹配其增长速度。
+\item \textbf{传统静态分析的局限}：其检测能力依赖预定义规则，
+      规则覆盖不足导致\emph{漏报}，规则过于宽泛导致\emph{误报}，且难以给出可解释的判定依据。
+\item \textbf{大语言模型的机遇与不足}：LLM 具备代码语义理解与推理潜力，
+      但仍存在两项短板——\emph{缺乏软件安全领域知识}，且\emph{孤立函数不足以支撑安全判定}。
 \end{itemize}
-\begin{colorblock}[black]{sinteflightgreen}{本项目的创新点}
-\begin{itemize}
-\item \textbf{不急着下结论}：像查案一样，先找证据、再说结论
-\item \textbf{两路取证}：既翻「漏洞案例手册」，也去仓库查调用关系
-\item \textbf{全程留痕}：查了什么、读了什么、为什么这么判，都在界面上
-\end{itemize}
+\vspace{0.2em}
+\begin{colorblock}[black]{sinteflightgreen}{研究切入点}
+构建基于 LLM 的\textbf{自主漏洞检测智能体}，以\emph{证据驱动}的方式完成函数级漏洞判定：
+先取证、后结论，并使全过程可追溯、可复核。
 \end{colorblock}
 \end{frame}
 
-% ===================== 2. 项目内容 =====================
-\begin{frame}{二、项目内容：我们要做一个什么东西}
-\framesubtitle{输入一段代码，它告诉你「有没有漏洞、为什么、怎么查出来的」}
+% ===================== 2. 研究目标与关键难点 =====================
+\begin{frame}{二、研究目标与关键难点}
+\framesubtitle{一项总目标，两项关键技术挑战}
 \small
-\begin{block}{一句话说清楚}
-给智能体一段 \textbf{C/C++ 函数代码} 和它所在\textbf{代码仓库的地址}，
-它回答三件事：\alert{有没有漏洞} —— \alert{凭什么这么说} —— \alert{它是怎么查出来的}。
+\begin{block}{总目标}
+面向 C/C++ 函数代码，输入函数源码及其所属代码仓库地址，
+输出三项内容：\alert{漏洞判定结果} —— \alert{判定理由} —— \alert{分析过程记录}。
 \end{block}
 \begin{columns}[t]
 \begin{column}{0.48\textwidth}
-\begin{colorblock}[black]{sinteflightgreen}{难点一：大模型不懂安全知识}
-\textbf{人话版}：它像个聪明但不熟悉业务的实习生，得先给它一本「漏洞案例手册」。\\
-\textbf{做法}：把历史上已披露的真实漏洞案例整理成可检索的知识库，每次检测先去翻这本手册，找相似的旧案例作参考。
+\begin{colorblock}[black]{sinteflightgreen}{难点一：LLM 缺乏安全领域知识}
+即使前沿模型亦难以充分掌握软件安全知识。\\
+\textbf{对策}：构建领域知识 \textbf{RAG} 模块，
+基于已披露的 CVE 实例建立可检索的知识库，为检测提供历史相似漏洞模式。
 \end{colorblock}
 \end{column}
 \begin{column}{0.48\textwidth}
-\begin{colorblock}[white]{sinteflilla}{难点二：光看一个函数判断不了}
-\textbf{人话版}：只看一页纸，判断不了整件事——得知道它被谁调用、又调用了谁。\\
-\textbf{做法}：给智能体装上「去仓库里查资料」的本事，让它自己决定什么时候需要查、查什么。
+\begin{colorblock}[white]{sinteflilla}{难点二：孤立函数难以支撑判定}
+漏洞常与调用方、被调用方、全局变量等上下文相关，单函数信息不完备。\\
+\textbf{对策}：赋予智能体\textbf{仓库按需读取}能力，
+在证据不足时自主挖掘关联上下文。
 \end{colorblock}
 \end{column}
 \end{columns}
 \vspace{0.1em}
-{\footnotesize \textbf{我们主动把范围收窄}：只做「判断 + 解释」，不做自动修复、不扫全仓库。先把流程跑通，再谈性能。}
+{\footnotesize \textbf{设计原则}：证据驱动——智能体先基于领域知识初步分析，证据不足时再按需调用仓库工具；检索与读取记录均在界面留痕。}
 \end{frame}
 
-% ===================== 3. 需求建模（业务 / 用户） =====================
-\begin{frame}{三、需求建模（1）业务需求与用户需求}
-\framesubtitle{谁会用、在什么场合用、用来解决什么问题}
-\small
-\begin{block}{业务需求}
-在代码上线之前，快速把「\textbf{看着可能有漏洞}的函数」筛出来，
-让安全人员集中精力看真正可疑的地方，而不是把代码从头看到尾。
-\end{block}
-\begin{columns}[t]
-\begin{column}{0.5\textwidth}
-\begin{colorblock}[white]{sintefpurple}{用户需求：谁会用它}
-\begin{itemize}
-\item \textbf{安全工程师}：日常代码审计，成批排查
-\item \textbf{开发人员}：提交代码前自己先查一遍
-\item \textbf{学生 / 研究者}：了解漏洞模式，做对比实验
-\end{itemize}
-\end{colorblock}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{block}{典型使用场景}
-\begin{enumerate}
-\item 把一段函数和仓库地址贴进界面
-\item 界面实时显示它每一步在查什么
-\item 拿到结论：有无漏洞 + 理由 + 分析记录
-\item 需要时上传文件，一次跑几十上百条
-\end{enumerate}
-\end{block}
-\end{column}
-\end{columns}
-\end{frame}
-
-% ===================== 4. 需求建模（功能） =====================
-\begin{frame}{三、需求建模（2）功能需求}
-\framesubtitle{系统必须能做的事，一共六项}
-\centering
-\footnotesize
-\begin{tabular}{@{}p{0.24\textwidth}p{0.68\textwidth}@{}}
-\toprule
-\textbf{功能} & \textbf{说明} \\
-\midrule
-F1 单样本检测 & 贴一段函数 + 仓库地址，给出「有漏洞 / 无漏洞」的结论 \\
-F2 批量检测     & 上传 \texttt{.jsonl} 文件一次跑多条，汇总生成结果文件 \\
-F3 知识检索     & 自动去「漏洞案例手册」里找相似案例，并展示找到了哪几条 \\
-F4 上下文挖掘   & 自动去代码仓库查调用方、被调用方、全局变量、类型与宏 \\
-F5 报告生成     & 输出「判定结果 + 判定理由 + 分析记录」三件套 \\
-F6 过程可视化   & 界面实时展示它每一步在做什么，事后还能回看整个分析过程 \\
-\bottomrule
-\end{tabular}
-\vspace{0.6em}
-
-{\footnotesize 六项功能围绕一条主线：\emph{看得见的检测过程}——不仅要给结论，还要让人能复核这个结论。}
-\end{frame}
-
-% ===================== 5. 需求建模（非功能） =====================
-\begin{frame}{三、需求建模（3）非功能需求}
-\framesubtitle{做得好不好，看这五条}
-\small
-\begin{itemize}
-\item \textbf{判断要准}：核心考核标准是「同一个函数的\emph{漏洞版}和\emph{修复版}能否被区分开」，
-      区分得越多分越高——而不是简单地「见谁都判有漏洞」。
-\item \textbf{过程要透明}：每一次知识检索、每一次仓库读取都要留痕，结论可复核、可追问。
-\item \textbf{合规要严格}（硬性红线）：一次只给一个版本、不给代码改动记录、不许联网搜答案。
-\item \textbf{成本要可控}：限制工具调用次数与文件数、缓存仓库快照，避免跑一次耗时过久或触发限流。
-\item \textbf{上手要容易}：\alert{必须有图形界面}，不接受只能敲命令行的版本。
-\end{itemize}
-\vspace{0.2em}
-\begin{block}{一句话概括我们的取向}
-宁要\emph{慢一点但说得清}的判断，也不要\emph{快但查不到依据}的结论——可解释性是这个项目的立足点。
-\end{block}
-\end{frame}
-
-% ===================== 6. 系统架构 =====================
-\begin{frame}{四、系统架构初步考虑}
-\framesubtitle{四层结构：界面 $\rightarrow$ 大脑 $\rightarrow$ 双手 $\rightarrow$ 资料}
+% ===================== 3. 系统架构与技术路线 =====================
+\begin{frame}{三、系统架构与技术路线}
+\framesubtitle{四层解耦结构：界面 $\rightarrow$ 智能体 $\rightarrow$ 工具 $\rightarrow$ 数据}
 \centering
 \begin{tikzpicture}[
   node distance=0.3cm,
@@ -159,141 +88,83 @@ F6 过程可视化   & 界面实时展示它每一步在做什么，事后还能
               minimum height=0.82cm, inner sep=3pt}
 ]
 \node[box, fill=sinteflightgreen] (ui)
-  {表现层（界面）：输入函数与仓库地址、实时看分析过程、接收报告};
+  {表现层（界面）：输入函数与仓库地址、实时查看分析过程、接收检测报告};
 \node[box, fill=sinteflilla, text=white, below=of ui] (agent)
-  {智能体层（大脑）：想一想 $\rightarrow$ 用个工具 $\rightarrow$ 看看结果 $\rightarrow$ 再想，证据够了才下结论};
+  {智能体层（决策）：\ 推理 $\rightarrow$ 工具调用 $\rightarrow$ 观测结果 $\rightarrow$ 再推理，证据充分方作出判定};
 \node[box, fill=sintefyellow, below=of agent] (tools)
-  {工具层（双手）：\ ① 翻漏洞案例手册\ \ $|$\ \ ② 去代码仓库查资料（grep / 找调用关系）};
+  {工具层（能力）：\ ① 领域知识检索（RAG）\ \ $|$\ \ ② 仓库上下文挖掘（grep / find / 调用关系解析）};
 \node[box, fill=maincolor, text=white, below=of tools] (data)
-  {数据层（资料）：历史漏洞案例库\ \ $|$\ \ 仓库快照缓存};
+  {数据层（资源）：历史 CVE 漏洞案例库\ \ $|$\ \ 代码仓库版本快照缓存};
 \end{tikzpicture}
 \vspace{0.4em}
 
-{\footnotesize 分层的好处：\textbf{界面、大脑、双手、资料各管一摊}，可以分开开发和替换——比如以后换一个更聪明的大模型，其余三层不用动。}
+{\footnotesize 分层解耦使界面、决策、能力与资源各自独立开发与替换——例如更换底层模型时，其余三层无需改动。}
 \end{frame}
 
-% ===================== 7. 技术栈 =====================
-\begin{frame}{五、开发技术栈与工具平台}
-\framesubtitle{原则：选成熟、资料多、踩坑少的技术，把力气花在真正的难点上}
-\centering
-\footnotesize
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{@{}p{0.17\textwidth}p{0.28\textwidth}p{0.47\textwidth}@{}}
-\toprule
-\textbf{模块} & \textbf{选型} & \textbf{为什么选它} \\
-\midrule
-开发语言 & Python 3.11 & 生态最全，前后端与算法一把梭 \\
-智能体框架 & LangChain（Agent + 工具调用） & 成熟、示例最多，「大脑思考」的架子现成 \\
-知识库 / 检索 & Chroma 向量库 + 中文嵌入模型 & 本地就能跑、零服务依赖，便于复现 \\
-代码理解 & GitHub API + Tree-sitter + grep/find & 精确拉取指定版本代码，并画出调用关系 \\
-图形界面 & Streamlit & 天然支持实时刷新与文件上传，开发量小 \\
-底层大模型 & 兼容 OpenAI 协议的大模型 & 接口统一，随时可换模型做对比 \\
-协作与版本 & Git + GitHub（Issue / 分支 / PR） & 过程留痕，团队协作数据可查 \\
-开发工具 & VS Code / PyCharm & 免费、插件多，团队通用 \\
-\bottomrule
-\end{tabular}
-\end{frame}
-
-% ===================== 8. Git 协作 =====================
-\begin{frame}{六、Git 协作开发：过程数据可查}
-\framesubtitle{五个人的代码怎么合到一起，且每一步都留得下痕迹}
+% ===================== 4. 核心模块设计 =====================
+\begin{frame}{四、核心模块设计}
+\framesubtitle{围绕两项关键难点，设计两个核心模块}
 \footnotesize
 \begin{columns}[t]
-\begin{column}{0.52\textwidth}
-\begin{block}{我们的工作流}
-\begin{itemize}
-\item \textbf{仓库}：GitHub 建团队仓库，代码、文档、脚本统一托管
-\item \textbf{分支}：\texttt{main}（随时可演示）$\leftarrow$ \texttt{dev}（集成）$\leftarrow$ \texttt{feat/xxx}（各人开发）
-\item \textbf{任务}：每项任务先开 Issue，认领后动手，看板上看得到进度
-\item \textbf{合并}：一律走 Pull Request，至少一人 review 后才合并
-\item \textbf{提交}：commit 写清「做了什么」，不写「update」
-\end{itemize}
-\end{block}
+\begin{column}{0.5\textwidth}
+\begin{colorblock}[black]{sinteflightgreen}{模块一：领域知识库（RAG）}
+基于提供的历史案例数据集，通过向量相似度检索相似漏洞模式，供 LLM 参考。\\
+\textbf{知识来源}：成对函数样本（漏洞版 / 修复版）、\texttt{cve\_desc}（披露描述）、
+\texttt{commit\_message}（修复说明）、\texttt{cwe}（漏洞类型）及项目元信息。\\
+\textbf{约束}：\emph{红线}——仅可使用所提供数据集，不得引入额外安全知识。
+\end{colorblock}
 \end{column}
-\begin{column}{0.46\textwidth}
-\begin{colorblock}[white]{sintefpurple}{为什么强调「可查」}
-\begin{itemize}
-\item 提交记录、Issue、PR、评审意见全部公开
-\item 谁做了什么、做到哪一步，一目了然
-\item 既是协作依据，也是个人贡献的凭证
-\item 出问题能回溯到具体哪次改动
-\end{itemize}
+\begin{column}{0.5\textwidth}
+\begin{colorblock}[white]{sintefpurple}{模块二：代码上下文挖掘}
+基于修复提交链接获取对应版本仓库快照，为智能体配备内容查找与读取工具，按需溯源。\\
+\textbf{可挖掘上下文}：调用方与被调用方、全局变量声明与使用、类型与宏定义、相关辅助函数。\\
+\textbf{实现}：GitHub API 获取快照，grep / find 检索，Tree-sitter 解析函数定义与调用关系。\\
+\textbf{约束}：严格版本控制——漏洞版仅取父提交版本，修复版仅取提交后版本，且不提供 \texttt{git diff}。
 \end{colorblock}
 \end{column}
 \end{columns}
 \end{frame}
 
-% ===================== 9. 进度安排 =====================
-\begin{frame}{七、项目开发计划与进度安排}
-\framesubtitle{七周里程碑，每周都有能拿得出手的东西}
+% ===================== 5. 技术栈 =====================
+\begin{frame}{五、开发技术栈与工具平台}
+\framesubtitle{技术选型：成熟稳定、可控可复现}
 \centering
 \footnotesize
-\begin{tabular}{@{}p{0.07\textwidth}p{0.25\textwidth}p{0.6\textwidth}@{}}
+\renewcommand{\arraystretch}{1.0}
+\begin{tabular}{@{}p{0.17\textwidth}p{0.33\textwidth}p{0.44\textwidth}@{}}
 \toprule
-\textbf{周次} & \textbf{阶段} & \textbf{本周产出（可验收）} \\
+\textbf{模块} & \textbf{选型} & \textbf{选型依据} \\
 \midrule
-W1 & 需求与数据摸底 & 理清数据字段；手工跑通几个样例，定下评分口径 \\
-W2 & 搭建知识库     & 历史案例入库，检索功能可用并能自测效果 \\
-W3 & 仓库查询工具   & 能拉取指定版本代码，能解析函数调用关系 \\
-W4 & 打通智能体     & 「先检索 $\rightarrow$ 再判断 $\rightarrow$ 需要时查仓库」的完整流程跑通 \\
-W5 & 界面与批量     & 图形界面可用（输入 / 过程 / 报告）+ 批量文件检测 \\
-W6 & 联调调优与评测 & 300 条一起跑，按评价标准统计并迭代优化 \\
-W7 & 报告与验收     & 技术报告、系统演示、结果文件提交 \\
+开发语言 & Python 3.11 & 生态完善，前后端与算法实现统一 \\
+智能体框架 & LangChain（Agent + 工具调用） & 框架成熟、示例丰富，支持自主推理与工具调用，满足「自主 Agent」红线要求 \\
+知识库与检索 & Chroma 向量库 + 中文嵌入模型 & 本地部署、零外部服务依赖，中文语义检索准确，结果可复现 \\
+代码解析 & GitHub API + Tree-sitter + grep/find & 获取指定版本仓库快照，解析函数定义与调用关系 \\
+图形界面 & Streamlit & 原生支持实时刷新与文件上传，契合过程可视化需求 \\
+底层大模型 & DeepSeek Flash & 代码理解与推理能力较强，接口兼容 OpenAI 协议，成本可控 \\
+协作与版本 & Git + GitHub（Issue / 分支 / PR） & 开发过程留痕，团队贡献可追溯 \\
 \bottomrule
 \end{tabular}
-\vspace{0.5em}
+\vspace{0.3em}
 
-{\footnotesize \textbf{节奏}：每周一次组会同步进度；从 W4 开始，保证「任何时候都能当场演示一个完整流程」。}
+{\footnotesize 各模块接口解耦，可在同类方案中替换（如更换底层模型时其余部分无需改动）。}
 \end{frame}
 
-% ===================== 10. 团队分工 =====================
-\begin{frame}{八、项目团队组成与工作安排}
-\framesubtitle{五人各管一摊，接口先定好再并行开发}
+% ===================== 6. 开发计划与团队分工 =====================
+\begin{frame}{六、开发计划与团队分工}
+\framesubtitle{七周三阶段推进，职责分工明确}
 \small
 \begin{itemize}
-\item \textbf{李柏谚（组长）}：总体架构与智能体主流程；把控进度、协调接口
-\item \textbf{杨聃}：历史漏洞案例的知识库与检索（把「手册」做出来并保证查得准）
-\item \textbf{王义卓}：仓库查询工具（拉取代码、解析调用关系、封装检索命令）
-\item \textbf{孙伊凡}：图形界面与批量流程（过程可视化、结果展示）
-\item \textbf{徐培栋}：评测、集成与文档（跑批统计、回归测试、报告撰写）
+\item \textbf{阶段一（W1--W3）基础构建}：需求与数据摸底；历史案例入库、知识库检索可用；仓库查询工具可用（拉取指定版本代码、解析调用关系）。
+\item \textbf{阶段二（W4--W5）系统集成}：打通「先检索 $\rightarrow$ 再判定 $\rightarrow$ 按需读仓库」的智能体主流程；完成图形界面与批量检测。
+\item \textbf{阶段三（W6--W7）评测交付}：300 条样本批量评测与迭代调优；撰写技术报告、完成系统演示与结果提交。
 \end{itemize}
 \vspace{0.2em}
-\begin{block}{协作方式}
-数据接口先行——先把「一条案例长什么样、工具返回什么、报告有哪些字段」定死，
-各人再并行开发，最后统一集成；全员参与联调与评测。
+\begin{block}{团队分工（五人）}
+\textbf{李柏谚}（组长）总体架构与智能体主流程；\textbf{杨聃}领域知识库与检索；
+\textbf{王义卓}仓库查询工具；\textbf{孙伊凡}图形界面与批量流程；
+\textbf{徐培栋}评测、集成与文档。\\
+\emph{协作方式}：数据接口先行，各模块并行开发，最后统一集成与全员评测。
 \end{block}
-\end{frame}
-
-% ===================== 11. 预期成果 =====================
-\begin{frame}{九、预期成果与评价目标}
-\framesubtitle{最后交付什么，以及我们打算拿到什么水平}
-\footnotesize
-\begin{columns}[t]
-\begin{column}{0.48\textwidth}
-\begin{block}{交付物}
-\begin{itemize}
-\item 一个能跑的完整系统：图形界面 + 知识库 + 仓库查询工具
-\item 300 条样本的检测结果文件
-\item 技术报告与现场演示
-\end{itemize}
-\end{block}
-\begin{colorblock}[black]{sinteflightgreen}{我们的目标}
-核心看「\textbf{同一函数的漏洞版与修复版能否被正确区分}」：
-\textbf{争取 B 级及以上}（区分对 \textbf{25 组以上}），
-同时把「\textbf{完全判反}」的情况压到区分对数的一半以内。
-\end{colorblock}
-\end{column}
-\begin{column}{0.48\textwidth}
-\begin{block}{可能踩的坑与预案}
-\begin{itemize}
-\item \textbf{把修复版也判成有漏洞}：提高门槛，必须能指出具体可疑点才判「有漏洞」
-\item \textbf{把漏洞版判成没问题}：加强案例手册的提示作用，放宽初筛
-\item \textbf{接口被限流}：仓库代码本地缓存，不重复拉取
-\item \textbf{进度紧张}：先保主流程能演示，界面细节往后放
-\end{itemize}
-\end{block}
-\end{column}
-\end{columns}
 \end{frame}
 
 \end{document}
