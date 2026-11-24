@@ -1,0 +1,37 @@
+[
+  {
+    "idx": 195019,
+    "verdict": "无漏洞",
+    "confidence": 0.75,
+    "cwe": [],
+    "reason": "total_inputs_size 逐项累加 value->TotalBytes()，并作为 CreateNodeDef(..., total_inputs_size) 的规模上限传入；超限时经 *result_too_large=true 及非 OK status 提前返回，折叠输出无法相对输入放大分配，未见未缓解的越界/整数缺陷。"
+  },
+  {
+    "idx": 197242,
+    "verdict": "无漏洞",
+    "confidence": 0.7,
+    "cwe": [],
+    "reason": "TF_LITE_ENSURE(context, rank != 0) 紧接在 num_filters % rank 之前，消除除零；此外还有 node->inputs->size==5、GetInputSafe、NumDimensions(state)==2 及各 dims 相等校验，未发现无校验的数组/指针访问。"
+  },
+  {
+    "idx": 195768,
+    "verdict": "无漏洞",
+    "confidence": 0.65,
+    "cwe": [],
+    "reason": "OP_REQUIRES(context, epsilon > 0, ...) 拒绝 0/负 epsilon，正是该处除零或规模放大类缺陷的修复形态；两个输入读取均用 OP_REQUIRES_OK，CreateResource 失败（非 ALREADY_EXISTS）经 OP_REQUIRES(context, false, status) 上报。"
+  },
+  {
+    "idx": 217569,
+    "verdict": "无漏洞",
+    "confidence": 0.5,
+    "cwe": [],
+    "reason": "EXIFMultipleValues/EXIFMultipleFractions 宏在每次 FormatLocaleString(buffer+length, MaxTextExtent-length, ...) 后都执行 if (length >= (MaxTextExtent-1)) length=MaxTextExtent-1，buffer[length-2] 写入落在界内，拼接长度已封顶。"
+  },
+  {
+    "idx": 267357,
+    "verdict": "有漏洞",
+    "confidence": 0.62,
+    "cwe": ["CWE-476"],
+    "reason": "循环 for (i = 0; i < argc - first_arg; i++) 内取 argv[first_arg + i + 1]，多迭代一次取到 argv[argc]（NULL 哨兵）并传给 xstrdup，造成空指针解引用；process->args_len = argc 也与实际参数个数不符，函数内无边界校验。"
+  }
+]

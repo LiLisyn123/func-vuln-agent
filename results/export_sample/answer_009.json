@@ -1,0 +1,32 @@
+[
+  {
+    "idx": 197128,
+    "verdict": "无漏洞",
+    "confidence": 0.55,
+    "cwe": [],
+    "reason": "函数只做 AST 到字节码的寄存器分配：sp 的每次 push()/pop_n(n) 成对，NODE_CALL 分支用 noself/safe 标志并在末尾 dispatch(s, skip) 回填跳转，未知 lhs 一律 codegen_error 提前终止；未发现长度计算、数组下标或指针运算存在缺少校验的可触发点。"
+  },
+  {
+    "idx": 232839,
+    "verdict": "有漏洞",
+    "confidence": 0.55,
+    "cwe": [
+      "CWE-20"
+    ],
+    "reason": "第8、14行 scalar<float>()()/scalar<int64>()() 未先校验张量 shape 为 scalar 就取首元素，空或非标量张量将越界读/CHECK 崩溃；现有 OP_REQUIRES 只校验 epsilon>0、num_streams>=0 取值，缺案例 CVE-2022-29197 要求的标量校验。"
+  },
+  {
+    "idx": 220442,
+    "verdict": "无漏洞",
+    "confidence": 0.62,
+    "cwe": [],
+    "reason": "第15-16行已有封顶校验：n<0 抛 ArgumentError、n>len 时 n=len；第17行 mrb_ary_new_from_values(mrb,n,ARY_PTR(a)) 因 n<=len 不会越界；第33/36行 size=len-n>=0，*ptr=*(ptr+n) 始终在 ARY_LEN 范围内，未见未缓解的越界或长度运算。"
+  },
+  {
+    "idx": 247755,
+    "verdict": "无漏洞",
+    "confidence": 0.6,
+    "cwe": [],
+    "reason": "第10-12行已含 CVE-2015-2141 修复（注释加 r = modn.Square(r) 满足 Jacobi 要求）；第14行 rInv 为零时循环重取随机数；第38行 ApplyFunction(y)!=x 立即抛异常，属先校验后返回；模平方、CRT、unblind 均有结果校验，未见未缓解缺陷。"
+  }
+]

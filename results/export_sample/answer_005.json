@@ -1,0 +1,37 @@
+[
+  {
+    "idx": 197760,
+    "verdict": "无漏洞",
+    "confidence": 0.58,
+    "cwe": [],
+    "reason": "函数仅按 params->type 分派模板调用（第7-21行），自身无内存拷贝、下标或长度运算；default 分支先 ReportError 再返回 kTfLiteError（第22-26行），未支持类型安全退出，函数内无可见可触发缺陷。"
+  },
+  {
+    "idx": 195293,
+    "verdict": "有漏洞",
+    "confidence": 0.75,
+    "cwe": ["CWE-787", "CWE-119"],
+    "reason": "第21行 `if (len > 0)`、第31行 `if (len > 0 || update)` 缺少 val 保护：val==FALSE 时 codegen 不会压栈，却仍执行 pop_n(len*2) 与 pop();pop()，生成器栈指针下溢，可越界写。对比第52行已有 `if (val && len > 0)`。"
+  },
+  {
+    "idx": 195038,
+    "verdict": "无漏洞",
+    "confidence": 0.66,
+    "cwe": [],
+    "reason": "第13行 `if (n < 0) mrb_raise` 与第14行 `if (n > len) n = len` 已封顶，取 n 个元素、ptr+=n、len-n 均落在 [0,len]；共享分支与 else 分支拷贝均以 len-n 为界，函数内无未缓解风险。"
+  },
+  {
+    "idx": 224154,
+    "verdict": "无漏洞",
+    "confidence": 0.72,
+    "cwe": [],
+    "reason": "关键弹出均带 val 保护：第21行 `if (val && len > 0)`、第31行 `if (val && (len > 0 || update))`，与第52行一致；val==FALSE 时不做 pop，栈指针保持平衡，且仍有 slimit/GEN_LIT_ARY_MAX 上限。"
+  },
+  {
+    "idx": 240595,
+    "verdict": "无漏洞",
+    "confidence": 0.6,
+    "cwe": [],
+    "reason": "第13-21行校验 updates 秩；第25-37行限制 N 与 params->dim_size(0) 不超过 Index 上限；第40-43行对 DIV 做除零校验；第45行 `if (N > 0)` 避免 num_updates/N 除零；第61-66行 StartsWith 保证 updates 以 indices 形状为前缀，风险均有缓解。"
+  }
+]

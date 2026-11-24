@@ -1,0 +1,25 @@
+{
+  "dataset": "D:\\study\\高级软件工程\\func-vuln-agent\\dataset\\test.jsonl",
+  "result": "results/ui_result_212544.jsonl",
+  "samples": 300,
+  "unique_idx": 300,
+  "pairs": 150,
+  "evaluated_pairs": 150,
+  "skipped_pairs": 0,
+  "counts": {
+    "P-C": 28,
+    "P-V": 87,
+    "P-B": 19,
+    "P-R": 16
+  },
+  "rates": {
+    "P-C": 0.1867,
+    "P-V": 0.58,
+    "P-B": 0.1267,
+    "P-R": 0.1067
+  },
+  "level": "C",
+  "base_level": "B",
+  "demoted": true,
+  "demotion_rule": "P-R 组数超过 P-C 组数的一半则降一级"
+}

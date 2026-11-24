@@ -1,0 +1,25 @@
+{
+  "dataset": "D:\\study\\高级软件工程\\func-vuln-agent\\dataset\\test.jsonl",
+  "result": "results/result_llm_sample.jsonl",
+  "samples": 300,
+  "unique_idx": 300,
+  "pairs": 150,
+  "evaluated_pairs": 25,
+  "skipped_pairs": 125,
+  "counts": {
+    "P-C": 5,
+    "P-V": 3,
+    "P-B": 15,
+    "P-R": 2
+  },
+  "rates": {
+    "P-C": 0.0333,
+    "P-V": 0.02,
+    "P-B": 0.1,
+    "P-R": 0.0133
+  },
+  "level": "D",
+  "base_level": "D",
+  "demoted": false,
+  "demotion_rule": ""
+}

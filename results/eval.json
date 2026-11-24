@@ -1,0 +1,25 @@
+{
+  "dataset": "D:\\study\\高级软件工程\\func-vuln-agent\\dataset\\test.jsonl",
+  "result": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\result.jsonl",
+  "samples": 300,
+  "unique_idx": 300,
+  "pairs": 150,
+  "evaluated_pairs": 150,
+  "skipped_pairs": 0,
+  "counts": {
+    "P-C": 9,
+    "P-V": 72,
+    "P-B": 66,
+    "P-R": 3
+  },
+  "rates": {
+    "P-C": 0.06,
+    "P-V": 0.48,
+    "P-B": 0.44,
+    "P-R": 0.02
+  },
+  "level": "D",
+  "base_level": "D",
+  "demoted": false,
+  "demotion_rule": ""
+}

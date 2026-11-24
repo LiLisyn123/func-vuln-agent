@@ -1,0 +1,27 @@
+[
+  {
+    "idx": 257461,
+    "verdict": "有漏洞",
+    "confidence": 0.6,
+    "cwe": [
+      "CWE-20",
+      "CWE-125",
+      "CWE-787"
+    ],
+    "reason": "第66-77行用 gradient_pos[apply_gradients_op] 直接调用 apply_gradients_node->input()/mutable_input()，函数内无 input_size() 上界校验；畸形图中 ApplyAdam 等节点输入不足时下标越界读写，可崩溃或堆破坏。fetch/MainVariables 的空检查未覆盖此点。"
+  },
+  {
+    "idx": 253515,
+    "verdict": "无漏洞",
+    "confidence": 0.55,
+    "cwe": [],
+    "reason": "本函数是 mruby 代码生成器，无原始内存拷贝或指针运算；参数个数在 339-382 行被显式封顶为 15（n<15 / n=15），push/pop_n 与 cursp()/s->sp 记账一致，384 行 SETIDX 另要求 n==2；未见可触发且无缓解的缺陷。"
+  },
+  {
+    "idx": 269941,
+    "verdict": "无漏洞",
+    "confidence": 0.5,
+    "cwe": [],
+    "reason": "可见部分已有多重校验：581/584 行 ReadBlob 长度检查、608 行 identific 比较、657/660 行 z!=3 拒绝、672-683 行 StructureClass 白名单、768 行 quantum_info 空检查、772 行 columns/rows==0 提前 goto MATLAB_KO；未见缺失的关键上界校验。"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "idx": 197359,
+    "verdict": "有漏洞",
+    "confidence": 0.62,
+    "cwe": ["CWE-125", "CWE-476"],
+    "reason": "第67/70行用映射下标2..9直接调用 input()/mutable_input() 访问repeated字段，函数内无 input_size() 校验，输入个数不足的Apply*节点会越界读写；第79行 dequeue_node 未初始化即用于第88行判断，畸形GraphDef可触发。"
+  },
+  {
+    "idx": 195328,
+    "verdict": "有漏洞",
+    "confidence": 0.9,
+    "cwe": ["CWE-787", "CWE-125"],
+    "reason": "第5行 `char szLineConv[1024]` 无容量校验：第18-53行每个字节最多写4字节且j只增，j可越过1024；第21行 `szLine[i+1]` 及连续 i++ 可读到szLine行尾外；第57行 `strcpy(szLine, szLineConv)` 不校验lineSize，同CVE-2018-20763越界写。"
+  },
+  {
+    "idx": 196841,
+    "verdict": "有漏洞",
+    "confidence": 0.6,
+    "cwe": ["CWE-787"],
+    "reason": "第2行 `static char id[32]` 固定缓冲，第87行 `sprintf(id,\"%.2X##PE%d_%d_%d\",pat->data[i][index],k,i,j)` 把未经范围校验的效果值直接格式化，缺少 `>0xff` 兜底（对照版有该判断），超范围值使%X输出变长可越界写；第12/15行的检查不覆盖该值。"
+  },
+  {
+    "idx": 231048,
+    "verdict": "无漏洞",
+    "confidence": 0.8,
+    "cwe": [],
+    "reason": "第17行以 `uxQueueLength == xQueueSizeInBytes/uxItemSize` 反查乘法溢出，第20行 `sizeof(Queue_t)+xQueueSizeInBytes > xQueueSizeInBytes` 查加法溢出，第33行 `pxNewQueue != NULL` 后才计算存储区并初始化，危险动作均有缓解。"
+  },
+  {
+    "idx": 246237,
+    "verdict": "无漏洞",
+    "confidence": 0.6,
+    "cwe": [],
+    "reason": "第200行 sprintf 前有 `if (pat->data[i][index]>0xff)` 兜底，超范围效果值改打印 \"??##PE...\"，第2行固定32字节 id 不会被超长%X输出撑破；且第12/15行已有 ord 与 i 的上下界 return，风险点均有缓解证据。"
+  }
+]

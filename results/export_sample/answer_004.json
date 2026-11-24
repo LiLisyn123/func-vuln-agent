@@ -1,0 +1,37 @@
+[
+  {
+    "idx": 195063,
+    "verdict": "有漏洞",
+    "confidence": 0.55,
+    "cwe": ["CWE-125"],
+    "reason": "第143行 memcpy(ctx->hdr_store + ctx->bytes_in_header, start, 8 - ctx->bytes_in_header) 之前只保证 remain>=5（第132行），当 bytes_in_header=1/2 且 remain=5 时从 start 读取 7/6 字节，越过包尾 1~2 字节；函数内无 remain >= 8-bytes_in_header 的校验，可触发堆越界读。"
+  },
+  {
+    "idx": 197973,
+    "verdict": "有漏洞",
+    "confidence": 0.5,
+    "cwe": ["CWE-476"],
+    "reason": "第45-49行 args_len=argc，但循环 i < argc - first_arg 调用 xstrdup(argv[first_arg+i+1])，最后一次 i=argc-first_arg-1 时下标为 argc，读到 argv[argc]（恒为 NULL）；循环上界应为 argc-first_arg-1，此处无空指针防护，可致空指针解引用。"
+  },
+  {
+    "idx": 195692,
+    "verdict": "无漏洞",
+    "confidence": 0.85,
+    "cwe": [],
+    "reason": "第21行已有乘法溢出校验 configASSERT(uxItemSize==0 || uxQueueLength == xQueueSizeInBytes/uxItemSize)，第32行按 sizeof(Queue_t)+xQueueSizeInBytes 分配，第34行判空后才写入，危险的长度计算与分配均有上界/溢出缓解。"
+  },
+  {
+    "idx": 255807,
+    "verdict": "无漏洞",
+    "confidence": 0.6,
+    "cwe": [],
+    "reason": "第31行 TF_LITE_ENSURE(context, rank != 0) 恰在取模与除法（第32-33行）之前，消除除零；第11-12行校验输入/输出数量，GetInputSafe/GetTemporarySafe 返回值均被检查，可见风险点均有缓解。"
+  },
+  {
+    "idx": 221631,
+    "verdict": "无漏洞",
+    "confidence": 0.62,
+    "cwe": [],
+    "reason": "第17-20行对 maxRank==0 提前返回，避免对空 shape_and_rank_for_dim 取 [0]；第31行 index=maxRank-dim.index()-1 由 rank<=maxRank 保证落在 [0,maxRank) 内，第32/39行判空并比较，未见可触发的越界。"
+  }
+]

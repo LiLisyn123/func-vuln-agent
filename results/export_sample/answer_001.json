@@ -1,0 +1,39 @@
+[
+  {
+    "idx": 196698,
+    "verdict": "无漏洞",
+    "confidence": 0.82,
+    "cwe": [],
+    "reason": "第23-45行先做完整形状校验（dense_shape向量、indices矩阵、values向量、default_value标量），并在第43-45行用 dense_shape_t.NumElements()!=0 拒绝空dense shape（正是此类历史案例的修复点）；随后把填充逻辑委派给functor，失败经OP_REQUIRES_OK_ASYNC提前返回，未留下未校验的越界/整数运算。"
+  },
+  {
+    "idx": 195388,
+    "verdict": "无漏洞",
+    "confidence": 0.55,
+    "cwe": [],
+    "reason": "可见部分已有缓解：第13-14行 conn==NULL 判空；第133-142行端口范围校验1..65535；第144行 snprintf 写 portstr；第177-185行校验 strlen(portstr)>=UNIXSOCK_PATH_BUFLEN 拒绝过长socket路径；第150-199行查 getaddrinfo/addrlist 非空。"
+  },
+  {
+    "idx": 196894,
+    "verdict": "无漏洞",
+    "confidence": 0.55,
+    "cwe": [],
+    "reason": "第33-37行 CRT/unblind 之后用 ApplyFunction(y)!=x 复核结果，不一致即 throw，错误签名不会外传；第35行 y=STDMIN(y,m_n-y) 做规范化；第10-13行循环重试处理 r 不可逆；第18-22行用 Jacobi 处理非二次剩余。未见无缓解的越界或整数缺陷，符合已加校验的修复形态。"
+  },
+  {
+    "idx": 224472,
+    "verdict": "有漏洞",
+    "confidence": 0.9,
+    "cwe": [
+      "CWE-787"
+    ],
+    "reason": "第9行 szLineConv[2048] 为栈缓冲，第22-59行所有分支只做 j++，全程没有 j<2048 的上界检查；第60行 szLineConv[j]=0 可越界写；第61行 strcpy(szLine, szLineConv) 也未判断 lineSize；第83行 szLineConv[i]=0 在 gf_utf8_wcstombs 返回2048时越界。均可由超长输入行触发。"
+  },
+  {
+    "idx": 220924,
+    "verdict": "无漏洞",
+    "confidence": 0.55,
+    "cwe": [],
+    "reason": "聚合路径在拷贝前有显式容量校验：第72-75行 if(ctx->hdr_store_alloc < ctx->hdr_store_size+pck_size) 先抬高alloc并gf_realloc，第76行才 memcpy 追加，正是此类案例的修复形态；第133/143/221行对 hdr_store 的写入不超过该分配，读取前有 remain<5 与 next_start_code 上界检查。"
+  }
+]

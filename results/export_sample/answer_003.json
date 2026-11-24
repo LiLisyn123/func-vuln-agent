@@ -1,0 +1,37 @@
+[
+  {
+    "idx": 195403,
+    "verdict": "无漏洞",
+    "confidence": 0.72,
+    "cwe": ["CWE-190"],
+    "reason": "危险动作仅是按 size 计算分配长度。第3行 `if (alloc_size <= 0) return NULL;` 在 malloc 前拦截负值/溢出的非正结果，第5行判空分配失败，之后只写 ret->size，无拷贝与指针运算。符合「补长度检查并提前 return」的修复形态。"
+  },
+  {
+    "idx": 195091,
+    "verdict": "无漏洞",
+    "confidence": 0.6,
+    "cwe": ["CWE-125"],
+    "reason": "第13行 `if (!found_shape) return {}` 拦截无效形状；两容器按 maxRank 分配，而 maxRank 取最大 rank，故 `maxRank - dim.index() - 1` 恒在 [0,maxRank)，写入前有 `!joined_dimensions[index]` 判断，返回前有 `.first` 非空判断，未见未缓解越界。"
+  },
+  {
+    "idx": 195233,
+    "verdict": "无漏洞",
+    "confidence": 0.65,
+    "cwe": ["CWE-476"],
+    "reason": "函数仅在 `ctx->set_output` 处解引用 ctx，而第8-11行 `if (ctx == nullptr) return errors::InvalidArgument(\"Missing context\");` 已提前返回，空指针路径被拦截；其余为 ShapeHandle 赋值，无拷贝、算术与释放。属「补空指针判断」的修复形态。"
+  },
+  {
+    "idx": 225062,
+    "verdict": "无漏洞",
+    "confidence": 0.55,
+    "cwe": ["CWE-787"],
+    "reason": "可见部分已硬化：第178行以 `strlen(portstr) >= UNIXSOCK_PATH_BUFLEN` 判长，端口经 parse_int_param 后限 1~65535，第103行 `nconnhost > 0` 保护 connhost[whichhost]，memcpy 长度取自 ai_addrlen；未见未缓解缺陷（函数体截断）。"
+  },
+  {
+    "idx": 259732,
+    "verdict": "无漏洞",
+    "confidence": 0.75,
+    "cwe": ["CWE-125"],
+    "reason": "第11-17行两道 OP_REQUIRES：`axis_ >= -1` 与 `axis_ == -1 || axis_ < input.shape().dims()`，均在 `input.dim_size(axis_)`（第22行）及按轴切片前生效；min/max 秩限 0/1，axis!=-1 时强制 dim_size(0)==depth，与 CVE-2021-29610 修复形态一致。"
+  }
+]

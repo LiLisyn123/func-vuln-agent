@@ -1,0 +1,23 @@
+[
+  {
+    "idx": 263521,
+    "verdict": "无漏洞",
+    "confidence": 0.78,
+    "cwe": [],
+    "reason": "num_indices = indices->bytes / sizeof(IndicesT) 遍历全部索引，`if (indices_values[i] < 0)` 即置标志，由 `TF_LITE_ENSURE(context, indices_has_only_positive_elements)` 拒绝；负索引越界读已被封堵。switch 仅按 params->type 分发，属已修复形态。"
+  },
+  {
+    "idx": 222906,
+    "verdict": "无漏洞",
+    "confidence": 0.82,
+    "cwe": [],
+    "reason": "`if (output_port < 0 || output_port >= ctx->num_outputs())` 在 `ctx->set_output(output_port, shape)` 之前把下标限定在 [0, num_outputs) 并返回 InvalidArgument，另有 `if (ctx == nullptr)` 空指针检查；越界写/空指针路径均已被前置校验封堵。"
+  },
+  {
+    "idx": 242899,
+    "verdict": "无漏洞",
+    "confidence": 0.72,
+    "cwe": [],
+    "reason": "functor 调用前已校验：dense_shape 为向量、indices 为矩阵、values 为向量、`indices_t.dim_size(0) == values_t.dim_size(0)`、default_value 为标量，并以 `dense_shape_t.NumElements() != 0` 拒绝空 dense_shape；均由 OP_REQUIRES_ASYNC 提前返回。"
+  }
+]

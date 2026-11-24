@@ -1,0 +1,123 @@
+{
+  "per_batch": 5,
+  "batches": [
+    {
+      "batch_id": "001",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_001.json",
+      "idx": [
+        196698,
+        195388,
+        196894,
+        224472,
+        220924
+      ]
+    },
+    {
+      "batch_id": "002",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_002.json",
+      "idx": [
+        195965,
+        196587,
+        195565,
+        225552,
+        235765
+      ]
+    },
+    {
+      "batch_id": "003",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_003.json",
+      "idx": [
+        195403,
+        195091,
+        195233,
+        225062,
+        259732
+      ]
+    },
+    {
+      "batch_id": "004",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_004.json",
+      "idx": [
+        195063,
+        197973,
+        195692,
+        255807,
+        221631
+      ]
+    },
+    {
+      "batch_id": "005",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_005.json",
+      "idx": [
+        197760,
+        195293,
+        195038,
+        224154,
+        240595
+      ]
+    },
+    {
+      "batch_id": "006",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_006.json",
+      "idx": [
+        194963,
+        197518,
+        198161,
+        219931,
+        228563
+      ]
+    },
+    {
+      "batch_id": "007",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_007.json",
+      "idx": [
+        195019,
+        197242,
+        195768,
+        217569,
+        267357
+      ]
+    },
+    {
+      "batch_id": "008",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_008.json",
+      "idx": [
+        197359,
+        195328,
+        196841,
+        231048,
+        246237
+      ]
+    },
+    {
+      "batch_id": "009",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_009.json",
+      "idx": [
+        197128,
+        232839,
+        220442,
+        247755
+      ]
+    },
+    {
+      "batch_id": "010",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_010.json",
+      "idx": [
+        263521,
+        222906,
+        242899
+      ]
+    },
+    {
+      "batch_id": "011",
+      "path": "D:\\study\\高级软件工程\\func-vuln-agent\\results\\export_sample\\batch_011.json",
+      "idx": [
+        257461,
+        253515,
+        269941
+      ]
+    }
+  ],
+  "samples": 50,
+  "pairs": 25
+}

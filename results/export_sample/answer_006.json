@@ -1,0 +1,37 @@
+[
+  {
+    "idx": 194963,
+    "verdict": "无漏洞",
+    "confidence": 0.5,
+    "cwe": [],
+    "reason": "所给源码在 EXIFTag 表内被截断，可见部分仅宏与标签表。唯一可见危险动作是 EXIFMultiple* 宏的格式化累积：第42-45、68-71行用 MaxTextExtent-length 限定可写长度并把 length 截到 MaxTextExtent-1，第48-49行才回写 buffer[length-2]，上界缓解明确，未发现无缓解的可触发缺陷。"
+  },
+  {
+    "idx": 197518,
+    "verdict": "无漏洞",
+    "confidence": 0.82,
+    "cwe": [],
+    "reason": "第11-13行 OP_REQUIRES(axis_ >= -1)，第14-17行校验 axis_ < dims()，第19-21行 IsSameSize，第35-44行校验 min/max 元素数等于 depth；负轴与越界轴在 dim_size(axis_)、flat_inner_outer_dims(axis_-1) 前即报错，属 CVE-2021-29610 修复形态。"
+  },
+  {
+    "idx": 198161,
+    "verdict": "有漏洞",
+    "confidence": 0.6,
+    "cwe": ["CWE-401"],
+    "reason": "第103行 DecompressBlock 产生独立副本 image2，但第109行 DataType!=miMATRIX 直接 continue，第132/136/139行 ThrowReaderException、第248行 columns/rows==0 的 goto MATLAB_KO 都未 DestroyImage(image2)；每轮泄漏一份副本，压缩 MAT 可反复触发致内存耗尽。"
+  },
+  {
+    "idx": 219931,
+    "verdict": "有漏洞",
+    "confidence": 0.6,
+    "cwe": ["CWE-476"],
+    "reason": "第28行 node_map_->GetNode(input) 未判空，第29行即 if (!IsReallyConstant(*input_node)) 解引用；畸形图中节点不存在时返回 nullptr 直接空指针解引用崩溃。第36-47行只校验 dtype 与 ref 类型，无任何指针有效性检查。"
+  },
+  {
+    "idx": 228563,
+    "verdict": "无漏洞",
+    "confidence": 0.68,
+    "cwe": [],
+    "reason": "第32、42行检查 snprintf 负返回；第66-69与80-83行对 thousand_sep/dec_point 造成的长度扩张做回绕检测并 raise_error；第37-47行 tmplen>=64 时扩容后重新格式化；reslen 已含整数位、小数位、分隔符与负号，t 自 resbuf+reslen-1 精确回填，无越界写。"
+  }
+]
