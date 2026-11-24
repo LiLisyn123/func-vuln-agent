@@ -1,0 +1,13 @@
+# 运行依赖（核心检测流程只依赖 Python 标准库）
+#
+# 说明：
+#   * streamlit  仅用于图形界面；
+#   * numpy      仅用于训练离线判别器（python -m fva.cli train），不训练可不装。
+#
+# 安装：
+#   python -m pip install -r requirements.txt
+# 国内网络可加速：
+#   python -m pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+streamlit>=1.30
+numpy>=1.24

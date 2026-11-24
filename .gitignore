@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# 运行时缓存（可删除重建；体积大，不入库）
+cache/
+results/traces/
+results/reports/
+results/export/batch_*.json
+results/export_sample/batch_*.json
+
+# 临时文件
+_tmp/
+_analysis/
+_render/
+_chk/
+_scan_secrets.py
+*.log
+~$*
+
+# 本地配置（含密钥，禁止入库）
+.env
+.env.local
+
+# LaTeX 编译中间产物（保留 .tex 与 .pdf）
+*.aux
+*.nav
+*.snm
+*.toc
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.xdv

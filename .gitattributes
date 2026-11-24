@@ -1,0 +1,16 @@
+# 统一换行与二进制识别，避免跨平台 checkout 破坏文件
+* text=auto
+
+# Windows 启动脚本必须是 CRLF，否则 cmd.exe 解析会出错（见 使用教程.md Q7）
+*.bat text eol=crlf
+
+# 数据与产物保持字节原样，禁止做换行转换
+*.jsonl -text
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.pptx binary
+*.psd binary
+*.gz binary
+*.tgz binary
